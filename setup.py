@@ -13,6 +13,7 @@ setup(
     description = 'python wrapper for ptrace',
     author = 'wenlin.wu',
     author_email = 'wenlin.wu@outlook.com',
+    url = 'https://github.com/kikimo/pyptrace',
     version = '1.1',
     packages = find_packages('src'),
     package_dir = {'':'src'},
