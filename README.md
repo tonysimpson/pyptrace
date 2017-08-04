@@ -2,6 +2,12 @@
 
 pyptrace is a Python wrapper for Linux ptrace system call.
 
+## Install
+
+```bash
+$ sudo pip install pyptrace
+```
+
 ## Examples
 
 This is an ecample of using pyptrace to trace execution of linux command `ls`:
