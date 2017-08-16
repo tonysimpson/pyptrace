@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <sys/ptrace.h>
+
+int main()
+{
+    printf("PTRACE_ATTACH = %d\n", PTRACE_ATTACH);
+    printf("PTRACE_CONT = %d\n", PTRACE_CONT);
+    printf("PTRACE_DETACH = %d\n", PTRACE_DETACH);
+    printf("PTRACE_EVENT_CLONE = %d\n", PTRACE_EVENT_CLONE);
+    printf("PTRACE_EVENT_EXEC = %d\n", PTRACE_EVENT_EXEC);
+    printf("PTRACE_EVENT_EXIT = %d\n", PTRACE_EVENT_EXIT);
+    printf("PTRACE_EVENT_FORK = %d\n", PTRACE_EVENT_FORK);
+    printf("PTRACE_EVENT_SECCOMP = %d\n", PTRACE_EVENT_SECCOMP);
+    printf("PTRACE_EVENT_VFORK = %d\n", PTRACE_EVENT_VFORK);
+    printf("PTRACE_EVENT_VFORK_DONE = %d\n", PTRACE_EVENT_VFORK_DONE);
+    printf("PTRACE_GETEVENTMSG = %d\n", PTRACE_GETEVENTMSG);
+    printf("PTRACE_GETFPREGS = %d\n", PTRACE_GETFPREGS);
+    printf("PTRACE_GETREGS = %d\n", PTRACE_GETREGS);
+    printf("PTRACE_GETREGSET = %d\n", PTRACE_GETREGSET);
+    printf("PTRACE_GETSIGINFO = %d\n", PTRACE_GETSIGINFO);
+    printf("PTRACE_GETSIGMASK = %d\n", PTRACE_GETSIGMASK);
+    printf("PTRACE_INTERRUPT = %d\n", PTRACE_INTERRUPT);
+    printf("PTRACE_KILL = %d\n", PTRACE_KILL);
+    printf("PTRACE_LISTEN = %d\n", PTRACE_LISTEN);
+    printf("PTRACE_O_EXITKILL = %d\n", PTRACE_O_EXITKILL);
+    printf("PTRACE_O_SUSPEND_SECCOMP = %d\n", PTRACE_O_SUSPEND_SECCOMP);
+    printf("PTRACE_O_TRACECLONE = %d\n", PTRACE_O_TRACECLONE);
+    printf("PTRACE_O_TRACEEXEC = %d\n", PTRACE_O_TRACEEXEC);
+    printf("PTRACE_O_TRACEEXIT = %d\n", PTRACE_O_TRACEEXIT);
+    printf("PTRACE_O_TRACEFORK = %d\n", PTRACE_O_TRACEFORK);
+    printf("PTRACE_O_TRACESECCOMP = %d\n", PTRACE_O_TRACESECCOMP);
+    printf("PTRACE_O_TRACESYSGOOD = %d\n", PTRACE_O_TRACESYSGOOD);
+    printf("PTRACE_O_TRACEVFORK = %d\n", PTRACE_O_TRACEVFORK);
+    printf("PTRACE_O_TRACEVFORKDONE = %d\n", PTRACE_O_TRACEVFORKDONE);
+    printf("PTRACE_PEEKDATA = %d\n", PTRACE_PEEKDATA);
+    printf("PTRACE_PEEKSIGINFO = %d\n", PTRACE_PEEKSIGINFO);
+    printf("PTRACE_PEEKTEXT = %d\n", PTRACE_PEEKTEXT);
+    printf("PTRACE_PEEKUSER = %d\n", PTRACE_PEEKUSER);
+    printf("PTRACE_POKEDATA = %d\n", PTRACE_POKEDATA);
+    printf("PTRACE_POKETEXT = %d\n", PTRACE_POKETEXT);
+    printf("PTRACE_POKEUSER = %d\n", PTRACE_POKEUSER);
+    printf("PTRACE_SEIZE = %d\n", PTRACE_SEIZE);
+    printf("PTRACE_SETFPREGS = %d\n", PTRACE_SETFPREGS);
+    printf("PTRACE_SETOPTIONS = %d\n", PTRACE_SETOPTIONS);
+    printf("PTRACE_SETREGS = %d\n", PTRACE_SETREGS);
+    printf("PTRACE_SETREGSET = %d\n", PTRACE_SETREGSET);
+    printf("PTRACE_SETSIGINFO = %d\n", PTRACE_SETSIGINFO);
+    printf("PTRACE_SETSIGMASK = %d\n", PTRACE_SETSIGMASK);
+    printf("PTRACE_SINGLESTEP = %d\n", PTRACE_SINGLESTEP);
+    printf("PTRACE_SYSCALL = %d\n", PTRACE_SYSCALL);
+    printf("PTRACE_TRACEME = %d\n", PTRACE_TRACEME);
+
+    return 0;
+}
