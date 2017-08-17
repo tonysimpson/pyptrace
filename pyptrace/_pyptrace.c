@@ -3,7 +3,7 @@
 
 #include <Python.h>
 
-static PyObject* _pyptrace(PyObject* self, PyObject *args)
+static PyObject* _pyptrace(PyObject* self, PyObject* args)
 {
     long request;
     long pid;
@@ -19,12 +19,35 @@ static PyObject* _pyptrace(PyObject* self, PyObject *args)
     return Py_BuildValue("l", ret);
 }
 
+static PyObject* _pyptrace_peek(PyObject* self, PyObject* args)
+{
+    long request;
+    long pid;
+    long addr;
+    long ret;
+
+    if (!PyArg_ParseTuple(args, "lll", &request, &pid, &addr)) {
+        return NULL;
+    }
+
+    errno = 0;
+    ret = ptrace(request, pid, (void *) addr, NULL);
+
+    return Py_BuildValue("(ll)", ret, errno);
+}
+
 static PyMethodDef pyptrace_funcs[] = {
     {
         "_pyptrace",
         (PyCFunction) _pyptrace,
         METH_VARARGS,
         "TODO"
+    }, {
+        "_pyptrace_peek",
+        (PyCFunction) _pyptrace_peek,
+        METH_VARARGS,
+        "TODO"
+
     }, {
         NULL
     }
