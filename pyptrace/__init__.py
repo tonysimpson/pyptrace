@@ -106,13 +106,13 @@ def detach(pid, signo):
     return _pyptrace._pyptrace(PTRACE_DETACH, pid, 0, signo)
 
 def peektext(pid, addr):
-    return _pyptrace._pyptrace_peek(PTRACE_PEEKTEXT, pid, addr, 0)
+    return _pyptrace._pyptrace_peek(PTRACE_PEEKTEXT, pid, addr)
 
 def peekdata(pid, addr):
-    return _pyptrace._pyptrace_peek(PTRACE_PEEKDATA, pid, addr, 0)
+    return _pyptrace._pyptrace_peek(PTRACE_PEEKDATA, pid, addr)
 
 def peekuser(pid, addr):
-    return _pyptrace._pyptrace_peek(PTRACE_PEEKUSER, pid, addr, 0)
+    return _pyptrace._pyptrace_peek(PTRACE_PEEKUSER, pid, addr)
 
 def poketext(pid, addr, data):
     return _pyptrace._pyptrace(PTRACE_POKETEXT, pid, addr, data)
