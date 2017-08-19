@@ -1,3 +1,9 @@
+# coding: utf-8
+
+'''
+Python wrapper for ptrace.
+'''
+
 import json
 import ctypes
 import platform

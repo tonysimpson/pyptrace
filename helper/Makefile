@@ -8,5 +8,7 @@ const: const.c
 const.c: gen.sh
 	sh gen.sh > const.c
 
-# .PHONY: gen_const
+clean:
+	rm -rf const
 
+.PHONY: clean
