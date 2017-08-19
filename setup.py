@@ -2,7 +2,7 @@ from setuptools import setup, find_packages, Extension
 
 ptrace_module = Extension('_pyptrace',
     define_macros = [('MAJOR_VERSION', '1'),
-        ('MINOR_VERSION', '4')],
+        ('MINOR_VERSION', '7')],
     # include_dirs = ['/usr/local/include'],
     # libraries = ['pthread'],
     # library_dirs = ['/usr/local/lib'],
@@ -10,12 +10,13 @@ ptrace_module = Extension('_pyptrace',
 
 setup(
     name = 'pyptrace',
-    description = 'python wrapper for ptrace',
+    description = 'Python wrapper for Linux ptrace system call.',
     author = 'wenlin.wu',
     author_email = 'wenlin.wu@outlook.com',
     url = 'https://github.com/kikimo/pyptrace',
-    version = '1.4',
+    version = '1.7',
     packages = find_packages(),
     package_dir = {'':'.'},
-    ext_modules = [ptrace_module]
+    ext_modules = [ptrace_module],
+    keywords = 'linux ptrace',
 )

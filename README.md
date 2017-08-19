@@ -1,64 +1,153 @@
-# pyptrace
 
-pyptrace is a Python wrapper for Linux ptrace system call.
+# Welcome to PyPtrace
 
-## Install
+PyPtrace is a Python wrapper for [Linux ptrace system call](http://man7.org/linux/man-pages/man2/ptrace.2.html)
+
+## 1. Installation
 
 ```bash
-$ sudo pip install pyptrace
+$ pip install pyptrace
 ```
 
-## Examples
 
-This is an ecample of using pyptrace to trace execution of linux command `ls`:
+## 2. Example Usage
+-------------
+
+run_tracee.py is an example of using PyPtrace to tracee program execution, the code is as below
 
 ```Python
-  1 import os
-  2 import sys
-  3 import signal
-  4 
-  5 import pyptrace
-  6 
-  7 pid = os.fork()
-  8 if pid == 0:  # child
-  9     pyptrace.traceme()
- 10     os.kill(os.getpid(), signal.SIGSTOP)
- 11     ret = os.execv('/bin/ls', ['ls'])
- 12     if ret:
- 13         print 'failed running execv'
- 14     sys.exit(ret)
- 15 
- 16 else:
- 17     print 'pid:', pid
- 18     ret = os.waitpid(pid, 0)
- 19     print 'tracee stopped:', ret
- 20     pyptrace.set_options(pid, pyptrace.PTRACE_O_EXITKILL)
- 21 
- 22     # now make execv happens
- 23     print 'tracee continue, and exec begin'
- 24     pyptrace.cont(pid)
- 25 
- 26     ret = os.waitpid(pid, 0)
- 27     print 'exec finished:', ret
- 28     # exec finished now
- 29 
- 30     def big_endian(int64num):
- 31         intstr = '%016x' % (int64num % 0xffffffffffffffff)
- 32         byte_arry = reversed([intstr[i:i+2] for i in xrange(0, len(intstr), 2)])
- 33         return '0x' + ''.join(byte_arry)
- 34     
- 35     # binary data of program test should have been loaded into memory
- 36     # let's check 
- 37     step = 8
- 38     main_start = 0x400659  # entry of main()
- 39     for addr in xrange(main_start, main_start + step * 8, step):
- 40         data = pyptrace.peektext(pid, addr)
- 41         # print 'addr: %08x, %016x' % (addr, data & 0xffffffffffffffff)
- 42         print 'addr: 0x%08x, %s' % (addr, big_endian(data))
+import os
+import sys
+import signal
+import pyptrace
 
+tracee_path = sys.argv[1]
+
+pid = os.fork()
+if pid == 0:  # within tracee
+    # make this process tracable for tracer
+    print 'tracee: run tracme()'
+    pyptrace.traceme()
+    print 'tracee: traceme() finished'
+
+    print 'tracee: stop myself after running traceme()'
+    os.kill(os.getpid(), signal.SIGSTOP)
+    print 'tracee: tracee running again'
+ 
+    # load tracee
+    print 'tracee: running execv()'
+    ret = os.execv(tracee_path, [os.path.basename(tracee_path)])
+ 
+    print 'tracee: failed execv:', ret
+    sys.exit(ret)
+ 
+elif pid > 0:  # within tracer
+    print 'tracer: waiting for tracee to set traceme()'
+    os.waitpid(pid, 0)
+
+    print 'tracer: setting tracee option PTRACE_O_EXITKILL'
+    pyptrace.setoptions(pid, pyptrace.PTRACE_O_EXITKILL)
+
+    # make execve of tracee happen
+    print 'tracer: make tracee begin running execve'
+    pyptrace.cont(pid)
+
+    # wait for execve of tracee to stop
+    print 'tracer: wait for execve of tracee to finish...'
+    os.waitpid(pid, 0)
+    ret, regs = pyptrace.getregs(pid)
+    print ret, regs
+    print pyptrace.RegsWrapper(regs)
+
+    regs.rip = 0x8848
+    print 'setregs:', pyptrace.setregs(pid, regs)
+    ret, regs = pyptrace.getregs(pid)
+    print 'after'
+    print pyptrace.RegsWrapper(regs)
+
+
+    print 'tracer: execv of tracee finished, tracee stop again'
+    print 'tracer: we can now set breakpoint to tracee'
+
+else:  # fork failed 
+    # we don't care indeed, it's not gonna happen
+    print 'fork failed'
+    sys.exit()
 ```
 
-## TODO
+Run run_tracee.py
 
-Not all ptrace requests are supported now, it's still under developement.
+```bash
+$ python run_tracee.py /bin/date
+tracer: waiting for tracee to set traceme()
+tracer: setting tracee option PTRACE_O_EXITKILL
+tracer: make tracee begin running execve
+tracer: wait for execve of tracee to finish...
+0 <pyptrace.X64UserRegs object at 0x7efe619aef80>
+{
+    "gs": 0, 
+    "gs_base": 0, 
+    "rip": "0x00007f22dd69bc30", 
+    "rdx": 0, 
+    "r15": 0, 
+    "cs": "0x0000000000000033", 
+    "rax": 0, 
+    "rsi": 0, 
+    "rcx": 0, 
+    "es": 0, 
+    "r14": 0, 
+    "fs": 0, 
+    "r12": 0, 
+    "r13": 0, 
+    "r10": 0, 
+    "r11": 0, 
+    "orig_rax": "0x000000000000003b", 
+    "fs_base": 0, 
+    "rsp": "0x00007ffce5ff8680", 
+    "ds": 0, 
+    "rbx": 0, 
+    "ss": "0x000000000000002b", 
+    "r8": 0, 
+    "r9": 0, 
+    "rbp": 0, 
+    "eflags": "0x0000000000000200", 
+    "rdi": 0
+}
+setregs: 0
+after
+{
+    "gs": 0, 
+    "gs_base": 0, 
+    "rip": "0x0000000000008848", 
+    "rdx": 0, 
+    "r15": 0, 
+    "cs": "0x0000000000000033", 
+    "rax": 0, 
+    "rsi": 0, 
+    "rcx": 0, 
+    "es": 0, 
+    "r14": 0, 
+    "fs": 0, 
+    "r12": 0, 
+    "r13": 0, 
+    "r10": 0, 
+    "r11": 0, 
+    "orig_rax": "0x000000000000003b", 
+    "fs_base": 0, 
+    "rsp": "0x00007ffce5ff8680", 
+    "ds": 0, 
+    "rbx": 0, 
+    "ss": "0x000000000000002b", 
+    "r8": 0, 
+    "r9": 0, 
+    "rbp": 0, 
+    "eflags": "0x0000000000000200", 
+    "rdi": 0
+}
+tracer: execv of tracee finished, tracee stop again
+tracer: we can now set breakpoint to tracee
+```
 
+## 3. References
+
+TODO
