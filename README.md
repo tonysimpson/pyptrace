@@ -148,6 +148,7 @@ tracer: execv of tracee finished, tracee stop again
 tracer: we can now set breakpoint to tracee
 ```
 
-## 3. References
+## 3. Doc
 
-TODO
+See [https://pyptrace.readthedocs.io/](https://pyptrace.readthedocs.io/) for more resources.
+
