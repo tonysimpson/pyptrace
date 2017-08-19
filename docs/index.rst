@@ -9,7 +9,7 @@ Welcome to PyPtrace
 PyPtrace is a Python wrapper for `Linux ptrace system call <http://man7.org/linux/man-pages/man2/ptrace.2.html>`_.
 
 1. Installation
-------------
+----------------
 
 .. code-block:: bash
 
@@ -17,7 +17,7 @@ PyPtrace is a Python wrapper for `Linux ptrace system call <http://man7.org/linu
 
 
 2. Example Usage
--------------
+-----------------
 
 run_tracee.py is an example of using PyPtrace to tracee program execution, the code is as below
 
@@ -156,16 +156,16 @@ Run run_tracee.py
     tracer: we can now set breakpoint to tracee
 
 3. References
----------
+-------------
 
 3.1 pyptrace module
-^^^^^^^^
+^^^^^^^^^^^^^^^^^^^
 
 .. automodule:: pyptrace
    :members:
 
 3.2 pyptrace.const module
-^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. automodule:: pyptrace.const
    :members:
