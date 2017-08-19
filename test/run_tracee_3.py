@@ -42,7 +42,6 @@ elif pid > 0:  # within tracer
     regs.rip = 0x8848
     print 'setregs:', pyptrace.setregs(pid, regs)
     ret, regs = pyptrace.getregs(pid)
-    print ret, regs
     print 'after'
     print pyptrace.RegsWrapper(regs)
 

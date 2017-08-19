@@ -26,7 +26,7 @@ elif pid > 0:  # within tracer
     os.waitpid(pid, 0)
 
     print 'tracer: setting tracee option PTRACE_O_EXITKILL'
-    pyptrace.set_options(pid, pyptrace.PTRACE_O_EXITKILL)
+    pyptrace.setoptions(pid, pyptrace.PTRACE_O_EXITKILL)
 
     print 'tracer: begin tracing tracee...'
 else:  # fork failed 

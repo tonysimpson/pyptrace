@@ -1,6 +1,8 @@
 import json
 import ctypes
 import platform
+from collections import Sequence
+import functools
 
 from const import *
 import _pyptrace
@@ -65,6 +67,9 @@ class X32UserRegs(ctypes.Structure):
 class UnsupportArchException(Exception):
     pass
 
+class PtraceException(Exception):
+    pass
+
 arch = platform.machine()
 if arch == 'x86_64':
     UserRegs = X64UserRegs
@@ -93,47 +98,77 @@ class RegsWrapper(object):
         reg_dict = {reg_name: reg_val(reg_name) for reg_name in reg_names}
         return json.dumps(reg_dict, indent=4)
 
+def check_ret(fn):
+    @functools.wraps(fn)
+    def wrapper(*args, **kwargs):
+        throw_exception = kwargs.get('throw_exception', True)
+        if 'throw_exception' in kwargs:
+            del kwargs['throw_exception']
+
+        ret = fn(*args, **kwargs)
+        errno = ret[0] if isinstance(ret, Sequence) else  ret 
+        if errno != 0 and throw_exception is True:
+            raise PtraceException('Failed executing %s' % fn.func_name)
+
+        return ret 
+
+    return wrapper
+
+@check_ret
 def attach(pid):
     return _pyptrace._pyptrace(PTRACE_ATTACH, pid, 0, 0)
 
+@check_ret
 def cont(pid, signo=0):
     return _pyptrace._pyptrace(PTRACE_CONT, pid, 0, signo)
 
+@check_ret
 def traceme():
     return _pyptrace._pyptrace(PTRACE_TRACEME, 0, 0, 0)
 
+@check_ret
 def detach(pid, signo):
     return _pyptrace._pyptrace(PTRACE_DETACH, pid, 0, signo)
 
+@check_ret
 def peektext(pid, addr):
     return _pyptrace._pyptrace_peek(PTRACE_PEEKTEXT, pid, addr)
 
+@check_ret
 def peekdata(pid, addr):
     return _pyptrace._pyptrace_peek(PTRACE_PEEKDATA, pid, addr)
 
+@check_ret
 def peekuser(pid, addr):
     return _pyptrace._pyptrace_peek(PTRACE_PEEKUSER, pid, addr)
 
+@check_ret
 def poketext(pid, addr, data):
     return _pyptrace._pyptrace(PTRACE_POKETEXT, pid, addr, data)
 
+@check_ret
 def pokedata(pid, addr, data):
     return _pyptrace._pyptrace(PTRACE_POKEDATA, pid, addr, data)
 
+@check_ret
 def pokeuser(pid, addr, data):
     return _pyptrace._pyptrace(PTRACE_POKEUSER, pid, addr, data)
 
+@check_ret
 def singlestep(pid, signo=0):
     return _pyptrace._pyptrace(PTRACE_SINGLESTEP, pid, 0, signo)
 
+@check_ret
 def syscall(pid, signo=0):
     return _pyptrace._pyptrace(PTRACE_SYSCALL, pid, 0, signo)
 
+@check_ret
 def setoptions(pid, options):
     return _pyptrace._pyptrace(PTRACE_SETOPTIONS, pid, 0, options)
 
 _libc = ctypes.cdll.LoadLibrary('libc.so.6')
 
+@check_ret
 def getregs(pid):
     regs = UserRegs()
     _libc_ptrace = _libc.ptrace
@@ -144,6 +179,7 @@ def getregs(pid):
     ret = _libc_ptrace(PTRACE_GETREGS, pid, None, ctypes.byref(regs))
     return ret, regs
 
+@check_ret
 def setregs(pid, regs):
     _libc_ptrace = _libc.ptrace
     _libc_ptrace.restype = ctypes.c_long
@@ -151,3 +187,4 @@ def setregs(pid, regs):
                              ctypes.c_void_p, ctypes.POINTER(UserRegs))
 
     ret = _libc_ptrace(PTRACE_SETREGS, pid, None, ctypes.byref(regs))
+    return ret

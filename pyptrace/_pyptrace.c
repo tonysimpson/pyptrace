@@ -33,7 +33,7 @@ static PyObject* _pyptrace_peek(PyObject* self, PyObject* args)
     errno = 0;
     ret = ptrace(request, pid, (void *) addr, NULL);
 
-    return Py_BuildValue("(ll)", ret, errno);
+    return Py_BuildValue("(ll)", errno, ret);
 }
 
 static PyMethodDef pyptrace_funcs[] = {
