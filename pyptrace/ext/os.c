@@ -18,10 +18,77 @@ static PyObject* _waitpid(PyObject* self, PyObject* args)
     return Py_BuildValue("(ii)", ret, status);
 }
 
+#define TEST_STATUS(METHOD) \
+static PyObject* test_##METHOD(PyObject* self, PyObject* args) \
+{ \
+    int status, ret; \
+\
+    if (!PyArg_ParseTuple(args, "i", &status)) { \
+        return NULL; \
+    } \
+\
+    ret = METHOD(status); \
+    return Py_BuildValue("i", ret); \
+}
+
+TEST_STATUS(WIFEXITED)
+TEST_STATUS(WEXITSTATUS)
+TEST_STATUS(WIFSIGNALED)
+TEST_STATUS(WTERMSIG)
+TEST_STATUS(WCOREDUMP)
+TEST_STATUS(WIFSTOPPED)
+TEST_STATUS(WSTOPSIG)
+TEST_STATUS(WIFCONTINUED)
+
 static PyMethodDef os_funcs[] = {
     {
         "waitpid",
         (PyCFunction) _waitpid,
+        METH_VARARGS,
+        "TODO"
+    }, {
+        "WIFEXITED",
+        (PyCFunction) test_WIFEXITED,
+        METH_VARARGS,
+        "TODO"
+    }, {
+        "WEXITSTATUS",
+        (PyCFunction) test_WEXITSTATUS,
+        METH_VARARGS,
+        "TODO"
+    }, {
+        "WIFSIGNALED",
+        (PyCFunction) test_WIFSIGNALED,
+        METH_VARARGS,
+        "TODO"
+    }, {
+        "WTERMSIG",
+        (PyCFunction) test_WTERMSIG,
+        METH_VARARGS,
+        "TODO"
+    }, {
+        "WCOREDUMP",
+        (PyCFunction) test_WCOREDUMP,
+        METH_VARARGS,
+        "TODO"
+    }, {
+        "WSTOPSIG",
+        (PyCFunction) test_WSTOPSIG,
+        METH_VARARGS,
+        "TODO"
+    }, {
+        "WIFSTOPPED",
+        (PyCFunction) test_WIFSTOPPED,
+        METH_VARARGS,
+        "TODO"
+    }, {
+        "WIFCONTINUED",
+        (PyCFunction) test_WIFCONTINUED,
+        METH_VARARGS,
+        "TODO"
+    }, {
+        "WIFCONTINUED",
+        (PyCFunction) test_WIFCONTINUED,
         METH_VARARGS,
         "TODO"
     }, {
