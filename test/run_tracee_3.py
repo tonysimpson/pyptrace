@@ -47,7 +47,6 @@ elif pid > 0:  # within tracer
     print 'after'
     print pyptrace.RegsWrapper(regs)
 
-
     print 'tracer: execv of tracee finished, tracee stop again'
     print 'tracer: we can now set breakpoint to tracee'
 

@@ -1,12 +1,12 @@
 from setuptools import setup, find_packages, Extension
 
 ptrace_module = Extension('_pyptrace',
-    define_macros = [('MAJOR_VERSION', '1'),
-        ('MINOR_VERSION', '7')],
-    # include_dirs = ['/usr/local/include'],
-    # libraries = ['pthread'],
-    # library_dirs = ['/usr/local/lib'],
+    define_macros = [('MAJOR_VERSION', '1'), ('MINOR_VERSION', '8')],
     sources=['pyptrace/_pyptrace.c'])
+
+extos_module = Extension('pyptrace.ext.os',
+    define_macros = [('MAJOR_VERSION', '1'), ('MINOR_VERSION', '8')],
+    sources=['pyptrace/ext/os.c'])
 
 setup(
     name = 'pyptrace',
@@ -14,9 +14,9 @@ setup(
     author = 'wenlin.wu',
     author_email = 'wenlin.wu@outlook.com',
     url = 'https://github.com/kikimo/pyptrace',
-    version = '1.7',
+    version = '1.8',
     packages = find_packages(),
     package_dir = {'':'.'},
-    ext_modules = [ptrace_module],
+    ext_modules = [ptrace_module, extos_module],
     keywords = 'linux ptrace',
 )

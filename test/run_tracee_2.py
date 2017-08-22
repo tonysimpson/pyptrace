@@ -3,6 +3,8 @@ import sys
 import signal
 import pyptrace
 
+tracee_path = sys.argv[1]
+
 pid = os.fork()
 if pid == 0:  # within tracee
     # make this process tracable for tracer
@@ -16,7 +18,7 @@ if pid == 0:  # within tracee
  
     # run test
     print 'tracee: running execv()'
-    ret = os.execv('./test', ['test'])
+    ret = os.execv(tracee_path, [os.path.basename(tracee_path)])
  
     print 'failed execv:', ret
     sys.exit(ret)
@@ -28,7 +30,21 @@ elif pid > 0:  # within tracer
     print 'tracer: setting tracee option PTRACE_O_EXITKILL'
     pyptrace.setoptions(pid, pyptrace.PTRACE_O_EXITKILL)
 
-    print 'tracer: begin tracing tracee...'
+    # make execve of tracee happen
+    print 'tracer: make tracee begin running execve'
+    pyptrace.cont(pid)
+
+    # wait for execve of tracee to stop
+    print 'tracer: wait for execve of tracee to finish...'
+    os.waitpid(pid, 0)
+
+    print 'tracer: continue tracee'
+    pyptrace.cont(pid)
+    print os.waitpid(pid, 0)
+
+    pyptrace.cont(pid)
+    print os.waitpid(pid, 0)
+
 else:  # fork failed 
     # we don't care indeed, it's not gonna happen
     print 'fork failed'
