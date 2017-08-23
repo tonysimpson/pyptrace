@@ -11,6 +11,7 @@ from collections import Sequence
 import functools
 
 from const import *
+import ext
 import _pyptrace
 
 class X64UserRegs(ctypes.Structure):

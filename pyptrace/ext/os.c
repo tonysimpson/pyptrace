@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <errno.h>
@@ -14,8 +15,24 @@ static PyObject* _waitpid(PyObject* self, PyObject* args)
     }
 
 
+    errno = 0;
     ret = waitpid(pid, &status, options);
-    return Py_BuildValue("(ii)", ret, status);
+    return Py_BuildValue("(iii)", ret, status, errno);
+}
+
+
+static PyObject* _kill(PyObject* self, PyObject* args)
+{
+    long pid;
+    int sig, ret;
+
+    if (!PyArg_ParseTuple(args, "li", &pid, &sig)) {
+        return NULL;
+    }
+
+    errno = 0;
+    ret = kill(pid, sig);
+    return Py_BuildValue("(ii)", ret, errno);
 }
 
 #define TEST_STATUS(METHOD) \
@@ -44,6 +61,11 @@ static PyMethodDef os_funcs[] = {
     {
         "waitpid",
         (PyCFunction) _waitpid,
+        METH_VARARGS,
+        "TODO"
+    }, {
+        "kill",
+        (PyCFunction) _kill,
         METH_VARARGS,
         "TODO"
     }, {
