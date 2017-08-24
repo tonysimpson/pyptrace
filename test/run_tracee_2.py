@@ -3,6 +3,8 @@ import sys
 import signal
 import pyptrace
 
+from pyptrace.ext import os as extos
+
 tracee_path = sys.argv[1]
 
 pid = os.fork()
@@ -36,14 +38,17 @@ elif pid > 0:  # within tracer
 
     # wait for execve of tracee to stop
     print 'tracer: wait for execve of tracee to finish...'
-    os.waitpid(pid, 0)
+    ret, status, errno = extos.waitpid(pid, 0)
 
-    print 'tracer: continue tracee'
-    pyptrace.cont(pid)
-    print os.waitpid(pid, 0)
+    while True:
+        pyptrace.cont(pid)
+        ret, status, errno = extos.waitpid(pid, 0)
 
-    pyptrace.cont(pid)
-    print os.waitpid(pid, 0)
+        if extos.WIFEXITED(status):
+            print 'program exited'
+            break
+
+        print 'stop signal: {}'.format(extos.WSTOPSIG(status))
 
 else:  # fork failed 
     # we don't care indeed, it's not gonna happen

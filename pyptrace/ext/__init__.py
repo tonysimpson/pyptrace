@@ -1,5 +1,5 @@
 from . import os
 
-os.WNOHANG      = 0x01
-os.WUNTRACED    = 0x02
-os.WCONTINUED   = 0x08
+os.EINVAL  = 22
+os.EPERM   = 1
+os.ESRCH   = 3

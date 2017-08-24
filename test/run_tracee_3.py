@@ -2,6 +2,7 @@ import os
 import sys
 import signal
 import pyptrace
+from pyptrace.ext import os as extos
 
 tracee_path = sys.argv[1]
 
@@ -40,6 +41,13 @@ elif pid > 0:  # within tracer
     ret, regs = pyptrace.getregs(pid)
     print ret, regs
     print pyptrace.RegsWrapper(regs)
+
+    # check process exist
+    ret, errno = extos.kill(pid, 0)
+    if ret != 0 and errno == extos.ESRCH:
+        print 'error process does not exit'
+    else:
+        print 'process ok'
 
     regs.rip = 0x8848
     print 'setregs:', pyptrace.setregs(pid, regs)
