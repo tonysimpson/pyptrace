@@ -1,12 +1,8 @@
 from setuptools import setup, find_packages, Extension
 
-ptrace_module = Extension('_pyptrace',
+extos_module = Extension('pyptrace.ext.os._os',
     define_macros = [('MAJOR_VERSION', '1'), ('MINOR_VERSION', '8')],
-    sources=['pyptrace/_pyptrace.c'])
-
-extos_module = Extension('pyptrace.ext.os',
-    define_macros = [('MAJOR_VERSION', '1'), ('MINOR_VERSION', '8')],
-    sources=['pyptrace/ext/os.c'])
+    sources=['pyptrace/ext/os/os.c'])
 
 setup(
     name = 'pyptrace',
@@ -17,6 +13,6 @@ setup(
     version = '1.8',
     packages = find_packages(),
     package_dir = {'':'.'},
-    ext_modules = [ptrace_module, extos_module],
+    ext_modules = [extos_module],
     keywords = 'linux ptrace',
 )

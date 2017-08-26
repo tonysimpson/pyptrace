@@ -27,7 +27,9 @@ if pid == 0:  # within tracee
  
 elif pid > 0:  # within tracer
     print 'tracer: waiting for tracee to set traceme()'
-    os.waitpid(pid, 0)
+    ret, status, errno = extos.waitpid(pid, 0)
+    signo = extos.WSTOPSIG(status)
+    print signo, extos.strsignal(signo)
 
     print 'tracer: setting tracee option PTRACE_O_EXITKILL'
     pyptrace.setoptions(pid, pyptrace.PTRACE_O_EXITKILL)

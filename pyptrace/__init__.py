@@ -11,8 +11,7 @@ from collections import Sequence
 import functools
 
 from const import *
-import ext
-import _pyptrace
+from ext import os as extos
 
 class X64UserRegs(ctypes.Structure):
     '''
@@ -146,7 +145,7 @@ def attach(pid):
     calling process.
     '''
 
-    return _pyptrace._pyptrace(PTRACE_ATTACH, pid, 0, 0)
+    return extos.ptrace(PTRACE_ATTACH, pid, 0, 0)
 
 @check_ret
 def cont(pid, signo=0):
@@ -156,7 +155,7 @@ def cont(pid, signo=0):
     otherwise, no signal is delivered.
     '''
 
-    return _pyptrace._pyptrace(PTRACE_CONT, pid, 0, signo)
+    return extos.ptrace(PTRACE_CONT, pid, 0, signo)
 
 @check_ret
 def traceme():
@@ -164,7 +163,7 @@ def traceme():
     Indicate that this process is to be traced by its parent.
     '''
 
-    return _pyptrace._pyptrace(PTRACE_TRACEME, 0, 0, 0)
+    return extos.ptrace(PTRACE_TRACEME, 0, 0, 0)
 
 @check_ret
 def detach(pid, signo):
@@ -172,7 +171,7 @@ def detach(pid, signo):
     Restart  the stopped tracee as for cont(), but first detach from it.
     '''
 
-    return _pyptrace._pyptrace(PTRACE_DETACH, pid, 0, signo)
+    return extos.ptrace(PTRACE_DETACH, pid, 0, signo)
 
 @check_ret
 def peektext(pid, addr):
@@ -181,7 +180,7 @@ def peektext(pid, addr):
     the word as the result of the peektext() call.
     '''
 
-    return _pyptrace._pyptrace_peek(PTRACE_PEEKTEXT, pid, addr)
+    return extos.ptrace_peek(PTRACE_PEEKTEXT, pid, addr)
 
 @check_ret
 def peekdata(pid, addr):
@@ -190,7 +189,7 @@ def peekdata(pid, addr):
     the word as the result of the peektext() call.
     '''
 
-    return _pyptrace._pyptrace_peek(PTRACE_PEEKDATA, pid, addr)
+    return extos.ptrace_peek(PTRACE_PEEKDATA, pid, addr)
 
 @check_ret
 def peekuser(pid, addr):
@@ -199,7 +198,7 @@ def peekuser(pid, addr):
     registers  and  other  information  about  the  process (see <sys/user.h>).
     '''
 
-    return _pyptrace._pyptrace_peek(PTRACE_PEEKUSER, pid, addr)
+    return extos.ptrace_peek(PTRACE_PEEKUSER, pid, addr)
 
 @check_ret
 def poketext(pid, addr, data):
@@ -207,7 +206,7 @@ def poketext(pid, addr, data):
     Copy the word data to the address addr in the tracee's text memory.
     '''
 
-    return _pyptrace._pyptrace(PTRACE_POKETEXT, pid, addr, data)
+    return extos.ptrace(PTRACE_POKETEXT, pid, addr, data)
 
 @check_ret
 def pokedata(pid, addr, data):
@@ -215,7 +214,7 @@ def pokedata(pid, addr, data):
     Copy the word data to the address addr in the tracee's data memory.
     '''
 
-    return _pyptrace._pyptrace(PTRACE_POKEDATA, pid, addr, data)
+    return extos.ptrace(PTRACE_POKEDATA, pid, addr, data)
 
 @check_ret
 def pokeuser(pid, addr, data):
@@ -223,7 +222,7 @@ def pokeuser(pid, addr, data):
     Copy  the  word  data to offset addr in the tracee's USER area.
     '''
 
-    return _pyptrace._pyptrace(PTRACE_POKEUSER, pid, addr, data)
+    return extos.ptrace(PTRACE_POKEUSER, pid, addr, data)
 
 @check_ret
 def singlestep(pid, signo=0):
@@ -232,7 +231,7 @@ def singlestep(pid, signo=0):
     to be stopped at the next entry to or exit after a single instruction.
     '''
 
-    return _pyptrace._pyptrace(PTRACE_SINGLESTEP, pid, 0, signo)
+    return extos.ptrace(PTRACE_SINGLESTEP, pid, 0, signo)
 
 @check_ret
 def syscall(pid, signo=0):
@@ -241,7 +240,7 @@ def syscall(pid, signo=0):
     to be stopped at the next entry to or exit from a system call.
     '''
 
-    return _pyptrace._pyptrace(PTRACE_SYSCALL, pid, 0, signo)
+    return extos.ptrace(PTRACE_SYSCALL, pid, 0, signo)
 
 @check_ret
 def setoptions(pid, options):
@@ -249,7 +248,7 @@ def setoptions(pid, options):
     Set  ptrace  options from options.
     '''
 
-    return _pyptrace._pyptrace(PTRACE_SETOPTIONS, pid, 0, options)
+    return extos.ptrace(PTRACE_SETOPTIONS, pid, 0, options)
 
 _libc = ctypes.cdll.LoadLibrary('libc.so.6')
 
@@ -282,3 +281,17 @@ def setregs(pid, regs):
 
     ret = _libc_ptrace(PTRACE_SETREGS, pid, None, ctypes.byref(regs))
     return ret
+
+# def getsiginfo(pid):
+#     '''
+#     Retrieve  information  about  the  signal  that  caused the stop.
+#     '''
+
+#     siginfo = ext.signal.Siginfo()
+#     _libc_ptrace = _libc.ptrace
+#     _libc_ptrace.restype = ctypes.c_long
+#     _libc_ptrace.argtypes = (ctypes.c_long, ctypes.c_int,
+#                              ctypes.c_void_p, ctypes.POINTER(UserRegs))
+
+#     ret = _libc_ptrace(PTRACE_GETSIGINFO, pid, None, ctypes.byref(siginfo))
+#     return ret

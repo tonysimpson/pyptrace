@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <sys/ptrace.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <errno.h>
@@ -57,6 +58,39 @@ TEST_STATUS(WIFSTOPPED)
 TEST_STATUS(WSTOPSIG)
 TEST_STATUS(WIFCONTINUED)
 
+static PyObject* _ptrace(PyObject* self, PyObject* args)
+{
+    long request;
+    long pid;
+    long addr;
+    long data;
+    long ret;
+
+    if (!PyArg_ParseTuple(args, "llll", &request, &pid, &addr, &data)) {
+        return NULL;
+    }
+
+    ret = ptrace(request, pid, (void *) addr, (void *) data);
+    return Py_BuildValue("l", ret);
+}
+
+static PyObject* _ptrace_peek(PyObject* self, PyObject* args)
+{
+    long request;
+    long pid;
+    long addr;
+    long ret;
+
+    if (!PyArg_ParseTuple(args, "lll", &request, &pid, &addr)) {
+        return NULL;
+    }
+
+    errno = 0;
+    ret = ptrace(request, pid, (void *) addr, NULL);
+
+    return Py_BuildValue("(ll)", errno, ret);
+}
+
 static PyMethodDef os_funcs[] = {
     {
         "waitpid",
@@ -114,12 +148,22 @@ static PyMethodDef os_funcs[] = {
         METH_VARARGS,
         "TODO"
     }, {
+        "ptrace",
+        (PyCFunction) _ptrace,
+        METH_VARARGS,
+        "TODO"
+    }, {
+        "ptrace_peek",
+        (PyCFunction) _ptrace_peek,
+        METH_VARARGS,
+        "TODO"
+    }, {
         NULL
     }
 };
 
-void initos(void)
+void init_os(void)
 {
-    Py_InitModule3("os", os_funcs,
+    Py_InitModule3("_os", os_funcs,
         "Wrapper for some usefull os calls.");
 }
