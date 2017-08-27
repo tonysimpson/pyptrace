@@ -223,13 +223,14 @@ def peekuser(pid, addr):
 
     return extos.ptrace_peek(PTRACE_PEEKUSER, pid, addr)
 
-@check_ret
-def poketext(pid, addr, data):
-    '''
-    Copy the word data to the address addr in the tracee's text memory.
-    '''
-
-    return extos.ptrace(PTRACE_POKETEXT, pid, addr, data)
+# # FIXME OverflowError: 'Python int too large to convert to C long'
+# @check_ret
+# def poketext(pid, addr, data):
+#     '''
+#     Copy the word data to the address addr in the tracee's text memory.
+#     '''
+# 
+#     return extos.ptrace(PTRACE_POKETEXT, pid, addr, data)
 
 @check_ret
 def pokedata(pid, addr, data):
@@ -305,6 +306,7 @@ def setregs(pid, regs):
     ret = _libc_ptrace(PTRACE_SETREGS, pid, None, ctypes.byref(regs))
     return ret
 
+@check_ret
 def getsiginfo(pid):
     '''
     Retrieve  information  about  the  signal  that  caused the stop.
@@ -318,3 +320,18 @@ def getsiginfo(pid):
 
     ret = _libc_ptrace(PTRACE_GETSIGINFO, pid, None, ctypes.byref(siginfo))
     return ret, siginfo
+
+@check_ret
+def poketext(pid, addr, data):
+    '''
+    Copy the word data to the address addr in the tracee's text memory.
+    '''
+    _libc_ptrace = _libc.ptrace
+    _libc_ptrace.restype = ctypes.c_long
+    _libc_ptrace.argtypes = (ctypes.c_long, ctypes.c_int,
+                             ctypes.c_long, ctypes.c_long)
+
+    # print 'pid: %d, addr: 0x%x, data: 0x%x' % (pid, addr, data)
+    # return extos.ptrace(PTRACE_POKETEXT, pid, addr, data)
+    ret = _libc_ptrace(PTRACE_POKETEXT, pid, addr, data)
+    return ret
