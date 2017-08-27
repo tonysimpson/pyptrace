@@ -13,6 +13,9 @@ import functools
 from const import *
 from ext import os as extos
 
+SI_KERNEL   = 0x80
+SI_USER     = 0x0
+
 class X64UserRegs(ctypes.Structure):
     '''
     x64 UserRegs structure, see /usr/include/sys/user.h.
@@ -282,16 +285,16 @@ def setregs(pid, regs):
     ret = _libc_ptrace(PTRACE_SETREGS, pid, None, ctypes.byref(regs))
     return ret
 
-# def getsiginfo(pid):
-#     '''
-#     Retrieve  information  about  the  signal  that  caused the stop.
-#     '''
+def getsiginfo(pid):
+    '''
+    Retrieve  information  about  the  signal  that  caused the stop.
+    '''
 
-#     siginfo = ext.signal.Siginfo()
-#     _libc_ptrace = _libc.ptrace
-#     _libc_ptrace.restype = ctypes.c_long
-#     _libc_ptrace.argtypes = (ctypes.c_long, ctypes.c_int,
-#                              ctypes.c_void_p, ctypes.POINTER(UserRegs))
+    siginfo = extos.Siginfo()
+    _libc_ptrace = _libc.ptrace
+    _libc_ptrace.restype = ctypes.c_long
+    _libc_ptrace.argtypes = (ctypes.c_long, ctypes.c_int,
+                             ctypes.c_void_p, ctypes.POINTER(extos.Siginfo))
 
-#     ret = _libc_ptrace(PTRACE_GETSIGINFO, pid, None, ctypes.byref(siginfo))
-#     return ret
+    ret = _libc_ptrace(PTRACE_GETSIGINFO, pid, None, ctypes.byref(siginfo))
+    return ret, siginfo

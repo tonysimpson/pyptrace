@@ -47,10 +47,17 @@ elif pid > 0:  # within tracer
         ret, status, errno = extos.waitpid(pid, 0)
 
         if extos.WIFEXITED(status):
-            print 'program exited'
+            print 'tracer, tracee exited'
             break
 
-        print 'stop signal: {}'.format(extos.WSTOPSIG(status))
+        signo = extos.WSTOPSIG(status)
+        print 'tracer, stop signal: {}'.format(extos.strsignal(signo))
+        ret, siginfo = pyptrace.getsiginfo(pid)
+        if ret != 0:
+            print 'tracer, failed to get tracee siginfo'
+            continue
+
+        print 'si_code: %x' % siginfo.si_code
 
 else:  # fork failed 
     # we don't care indeed, it's not gonna happen

@@ -8,6 +8,7 @@ void foo(int val)
 
     printf("addr of my_local: %lld\n", (unsigned long long) &my_local);
     for (i = 0;i < my_local; i++) {
+        __asm__ __volatile__("int3");
         sleep(1);
         printf("%d\n", i);
     }
