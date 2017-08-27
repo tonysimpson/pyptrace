@@ -42,7 +42,12 @@ elif pid > 0:  # within tracer
     print 'tracer: wait for execve of tracee to finish...'
     ret, status, errno = extos.waitpid(pid, 0)
 
+
     while True:
+        bp_flag = pyptrace.DR7(0)
+        pyptrace.pokeuser(pid, pyptrace.DR_OFFSET(0), 0x4005d6)
+        pyptrace.pokeuser(pid, pyptrace.DR_OFFSET(7), bp_flag)
+
         pyptrace.cont(pid)
         ret, status, errno = extos.waitpid(pid, 0)
 
@@ -57,7 +62,17 @@ elif pid > 0:  # within tracer
             print 'tracer, failed to get tracee siginfo'
             continue
 
-        print 'si_code: %x' % siginfo.si_code
+        if siginfo.si_signo != signal.SIGTRAP:
+            continue
+
+        if siginfo.si_code == pyptrace.SI_KERNEL:
+            print 'sys trap'
+        elif siginfo.si_code == extos.TRAP_TRACE:
+            print 'process trap'
+        elif siginfo.si_code == extos.TRAP_HWBKPT:
+            print 'hardware break point'
+        else:
+            print 'unknown si_code: 0x%x' % siginfo.si_code
 
 else:  # fork failed 
     # we don't care indeed, it's not gonna happen

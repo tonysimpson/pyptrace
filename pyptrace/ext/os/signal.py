@@ -31,6 +31,17 @@ class Siginfo(ctypes.Structure):
         ('si_arch',     ctypes.c_uint)
     ]
 
+__SI_FAULT      = 0
+
+'''
+SIGTRAP si_codes
+'''
+TRAP_BRKPT      = (__SI_FAULT|1)  # process breakpoint
+TRAP_TRACE      = (__SI_FAULT|2)  # process trace trap
+TRAP_BRANCH     = (__SI_FAULT|3)  # process taken branch trap
+TRAP_HWBKPT     = (__SI_FAULT|4)  # hardware breakpoint/watchpoint
+NSIGTRAP        = 4
+
 _libc = ctypes.cdll.LoadLibrary('libc.so.6')
 def strsignal(signo):
     _libc_strsignal = _libc.strsignal

@@ -86,14 +86,34 @@ UserRegs structure, PyPtrace will choose bwtween X32UserRegs/X64UserRegs
 according to the machine arch that it is running on.
 '''
 UserRegs = None
+WORD_SIZE = None
 
 arch = platform.machine()
 if arch == 'x86_64':
     UserRegs = X64UserRegs
+    WORD_SIZE = 8
+    DR_BASE = 848
 elif arch == 'i686':
     UserRegs = X32UserRegs
+    WORD_SIZE = 4
+    DR_BASE = 252
 else:
     raise UnsupportArchException(arch)
+
+
+BP_FLAG_EXEC         = 0x00
+BP_FLAG_WRITE        = 0X01
+BP_FLAG_READ_WRITE   = 0x03
+
+BP_LEN_1 = 0x00
+BP_LEN_2 = 0x01
+BP_LEN_4 = 0X11
+
+def DR7(dr_idx, bp_flag=BP_FLAG_EXEC, bp_len=BP_LEN_1):
+    return (0x03 << (dr_idx * 2)) | ((bp_flag | (bp_len << 2)) << (dr_idx * 4 + 16))
+
+def DR_OFFSET(dr_idx):
+    return DR_BASE + dr_idx * WORD_SIZE
 
 class RegsWrapper(object):
     '''
