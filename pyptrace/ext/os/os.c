@@ -66,7 +66,7 @@ static PyObject* _ptrace(PyObject* self, PyObject* args)
     long data;
     long ret;
 
-    if (!PyArg_ParseTuple(args, "llll", &request, &pid, &addr, &data)) {
+    if (!PyArg_ParseTuple(args, "llkk", &request, &pid, &addr, &data)) {
         return NULL;
     }
 
@@ -81,14 +81,14 @@ static PyObject* _ptrace_peek(PyObject* self, PyObject* args)
     long addr;
     long ret;
 
-    if (!PyArg_ParseTuple(args, "lll", &request, &pid, &addr)) {
+    if (!PyArg_ParseTuple(args, "llk", &request, &pid, &addr)) {
         return NULL;
     }
 
     errno = 0;
     ret = ptrace(request, pid, (void *) addr, NULL);
 
-    return Py_BuildValue("(ll)", errno, ret);
+    return Py_BuildValue("(lk)", errno, ret);
 }
 
 static PyMethodDef os_funcs[] = {
