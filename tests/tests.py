@@ -1,5 +1,8 @@
+'''
+unit test for pyptrace
+'''
+
 import time
-import traceback
 import unittest
 import subprocess
 from contextlib import contextmanager
