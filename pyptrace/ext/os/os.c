@@ -162,8 +162,26 @@ static PyMethodDef os_funcs[] = {
     }
 };
 
+#define MODULE_NAME "_os"
+#define MODULE_DOC  "Wrapper for some usefull os calls."
+#if PY_MAJOR_VERSION >= 3
+static struct PyModuleDef os_module_def = {
+   PyModuleDef_HEAD_INIT,
+   MODULE_NAME,
+   MODULE_DOC,
+   0,
+   os_funcs
+};
+
+PyMODINIT_FUNC
+PyInit__os(void)
+{
+    PyObject* m = PyModule_Create(&os_module_def);
+    return m;
+}
+#else
 void init_os(void)
 {
-    Py_InitModule3("_os", os_funcs,
-        "Wrapper for some usefull os calls.");
+    Py_InitModule3(MODULE_NAME, os_funcs, MODULE_DOC);
 }
+#endif
