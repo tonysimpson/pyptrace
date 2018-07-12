@@ -10,8 +10,8 @@ import platform
 from collections import Sequence
 import functools
 
-from const import *
-from ext import os as extos
+from .const import *
+from .ext import os as extos
 
 SI_KERNEL   = 0x80
 SI_USER     = 0x0
@@ -336,3 +336,4 @@ def getsiginfo(pid):
 #     ret = _libc_ptrace(PTRACE_POKETEXT, pid, addr, data)
 #     return ret
 # 
+
