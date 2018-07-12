@@ -16,8 +16,6 @@ def create_process_ctx(ppath):
 
     try:
         yield proc
-    except Exception, e:
-        raise e
     finally:  # clean up
         retcode = proc.poll() 
         if retcode is None:
